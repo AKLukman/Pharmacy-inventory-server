@@ -32,8 +32,7 @@ connectToServer((err) => {
   }
 });
 
-// Base URL tool route
-app.use("/api/v1/tools", toolRoute);
+// Base URL Pharmacy route
 app.use("/api/v1/pharmacy", pharmacyRoute);
 
 app.get("/", (req, res) => {
@@ -54,6 +53,6 @@ app.use(errorHandle);
 process.on("unhandledRejection", (error) => {
   console.log(error.name, error.message);
   app.close(() => {
-    process.exit(1);
+    process.exit();
   });
 });
