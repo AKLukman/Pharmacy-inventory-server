@@ -71,7 +71,7 @@ module.exports.getAdmin = async (req, res, next) => {
   try {
     const db = getDb();
     const email = req.params.email;
-    console.log(email);
+
     const query = { email: email };
     const user = await db.collection("usersCollections").findOne(query);
     res.send({ isAdmin: user?.role === "admin" });

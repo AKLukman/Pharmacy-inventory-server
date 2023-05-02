@@ -53,6 +53,6 @@ app.use(errorHandle);
 process.on("unhandledRejection", (error) => {
   console.log(error.name, error.message);
   app.close(() => {
-    process.exit();
+    process.exit(1);
   });
 });

@@ -90,7 +90,9 @@ module.exports.getAllMedicine = async (req, res, next) => {
     const search = req.query.search;
 
     if (search.length) {
-      query = { $or: [{ drugName: { $regex: search } }] };
+      query = {
+        $or: [{ drugName: { $regex: search } }],
+      };
       const medicine = await db.collection("allMedicine").find(query).toArray();
       res.send({ medicine });
     } else {
@@ -108,43 +110,6 @@ module.exports.getAllMedicine = async (req, res, next) => {
 };
 
 // Stoke store
-module.exports.getStokeStoreMedicine = async (req, res, next) => {
-  try {
-    const db = getDb();
-    const page = parseInt(req.query.page);
-    const size = parseInt(req.query.size);
-    const search = req.query.search;
-    let query = {};
-    if (search.length) {
-      query = {
-        availabilityStoke: "Y ",
-        idCheck: "Y",
-        $or: [{ drugName: { $regex: search } }],
-      };
-      const medicine = await db.collection("allMedicine").find(query).toArray();
-      res.send({ medicine });
-    } else {
-      const result = db
-        .collection("allMedicine")
-        .find({ availabilityStoke: "Y ", idCheck: "Y" });
-      const medicine = await result
-        .skip(page * size)
-        .limit(size)
-        .toArray();
-      const countAvailbility = await db
-        .collection("allMedicine")
-        .find({ availabilityStoke: "Y ", idCheck: "Y" })
-        .toArray();
-      // .estimatedDocumentCount();
-
-      const count = countAvailbility.length;
-      res.send({ count, medicine });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports.getStokeStoreMedicineIdCeckNotRequired = async (
   req,
   res,
@@ -159,72 +124,50 @@ module.exports.getStokeStoreMedicineIdCeckNotRequired = async (
     if (search.length) {
       query = {
         availabilityStoke: "Y ",
-        idCheck: "N",
-        $or: [{ drugName: { $regex: search } }],
+        $or: [
+          { drugName: { $regex: search, $options: "i" } },
+          {
+            condition: { $regex: search, $options: "i" },
+          },
+        ],
       };
       const medicine = await db.collection("allMedicine").find(query).toArray();
       res.send({ medicine });
     } else {
       const result = db
         .collection("allMedicine")
-        .find({ availabilityStoke: "Y ", idCheck: "N" });
+        .find({ availabilityStoke: "Y " });
       const medicine = await result
         .skip(page * size)
         .limit(size)
         .toArray();
       const countAvailbility = await db
         .collection("allMedicine")
-        .find({ availabilityStoke: "Y ", idCheck: "N" })
+        .find({ availabilityStoke: "Y " })
         .toArray();
       // .estimatedDocumentCount();
 
       const count = countAvailbility.length;
       res.send({ count, medicine });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports.getStokeMedicineDetails = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+
+    const result = await db.collection("allMedicine").findOne(query);
+    res.send(result);
   } catch (error) {
     next(error);
   }
 };
 
 // Tunstall Store
-
-module.exports.getTunstallStoreMedicine = async (req, res, next) => {
-  try {
-    const db = getDb();
-    const page = parseInt(req.query.page);
-    const size = parseInt(req.query.size);
-    const search = req.query.search;
-    let query = {};
-    if (search.length) {
-      query = {
-        availabilityTunstall: "Y",
-        idCheck: "Y",
-        $or: [{ drugName: { $regex: search } }],
-      };
-      const medicine = await db.collection("allMedicine").find(query).toArray();
-      res.send({ medicine });
-    } else {
-      const result = db
-        .collection("allMedicine")
-        .find({ availabilityTunstall: "Y", idCheck: "Y" });
-      const medicine = await result
-        .skip(page * size)
-        .limit(size)
-        .toArray();
-      const countAvailbility = await db
-        .collection("allMedicine")
-        .find({ availabilityTunstall: "Y", idCheck: "Y" })
-        .toArray();
-      // .estimatedDocumentCount();
-
-      const count = countAvailbility.length;
-      res.send({ count, medicine });
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports.getTunstallStoreMedicineIdCeckNotRequired = async (
   req,
   res,
@@ -239,15 +182,18 @@ module.exports.getTunstallStoreMedicineIdCeckNotRequired = async (
     if (search.length) {
       query = {
         availabilityTunstall: "Y",
-        idCheck: "N",
-        $or: [{ drugName: { $regex: search } }],
+        $or: [
+          { drugName: { $regex: search, $options: "i" } },
+          {
+            condition: { $regex: search, $options: "i" },
+          },
+        ],
       };
       const medicine = await db.collection("allMedicine").find(query).toArray();
       res.send({ medicine });
     } else {
       const result = db.collection("allMedicine").find({
         availabilityTunstall: "Y",
-        idCheck: "N",
       });
       const medicine = await result
         .skip(page * size)
@@ -257,7 +203,6 @@ module.exports.getTunstallStoreMedicineIdCeckNotRequired = async (
         .collection("allMedicine")
         .find({
           availabilityTunstall: "Y",
-          idCheck: "N",
         })
         .toArray();
       // .estimatedDocumentCount();
@@ -265,6 +210,19 @@ module.exports.getTunstallStoreMedicineIdCeckNotRequired = async (
       const count = countAvailbility.length;
       res.send({ count, medicine });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.getTunstallMedicineDetails = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+
+    const result = await db.collection("allMedicine").findOne(query);
+    res.send(result);
   } catch (error) {
     next(error);
   }
@@ -282,15 +240,19 @@ module.exports.getFentonStoreMedicine = async (req, res, next) => {
     if (search.length) {
       query = {
         availabilityFenton: "Y",
-        idCheck: "Y",
-        $or: [{ drugName: { $regex: search } }],
+
+        $or: [
+          { drugName: { $regex: search, $options: "i" } },
+          {
+            condition: { $regex: search, $options: "i" },
+          },
+        ],
       };
       const medicine = await db.collection("allMedicine").find(query).toArray();
       res.send({ medicine });
     } else {
       const result = db.collection("allMedicine").find({
         availabilityFenton: "Y",
-        idCheck: "Y",
       });
       const medicine = await result
         .skip(page * size)
@@ -300,7 +262,6 @@ module.exports.getFentonStoreMedicine = async (req, res, next) => {
         .collection("allMedicine")
         .find({
           availabilityFenton: "Y",
-          idCheck: "Y",
         })
         .toArray();
       // .estimatedDocumentCount();
@@ -313,11 +274,22 @@ module.exports.getFentonStoreMedicine = async (req, res, next) => {
   }
 };
 
-module.exports.getFentonStoreMedicineIdCeckNotRequired = async (
-  req,
-  res,
-  next
-) => {
+module.exports.getFentonMedicineDetails = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+
+    const result = await db.collection("allMedicine").findOne(query);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Hanley Store
+
+module.exports.getHanleyStoreMedicine = async (req, res, next) => {
   try {
     const db = getDb();
     const page = parseInt(req.query.page);
@@ -326,16 +298,20 @@ module.exports.getFentonStoreMedicineIdCeckNotRequired = async (
     let query = {};
     if (search.length) {
       query = {
-        availabilityFenton: "Y",
-        idCheck: "N",
-        $or: [{ drugName: { $regex: search } }],
+        availabilityHanley: "Y",
+
+        $or: [
+          { drugName: { $regex: search, $options: "i" } },
+          {
+            condition: { $regex: search, $options: "i" },
+          },
+        ],
       };
       const medicine = await db.collection("allMedicine").find(query).toArray();
       res.send({ medicine });
     } else {
       const result = db.collection("allMedicine").find({
-        availabilityFenton: "Y",
-        idCheck: "N",
+        availabilityHanley: "Y",
       });
       const medicine = await result
         .skip(page * size)
@@ -344,8 +320,7 @@ module.exports.getFentonStoreMedicineIdCeckNotRequired = async (
       const countAvailbility = await db
         .collection("allMedicine")
         .find({
-          availabilityFenton: "Y",
-          idCheck: "N",
+          availabilityHanley: "Y",
         })
         .toArray();
       // .estimatedDocumentCount();
@@ -358,10 +333,109 @@ module.exports.getFentonStoreMedicineIdCeckNotRequired = async (
   }
 };
 
+module.exports.getHanleyMedicineDetails = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+
+    const result = await db.collection("allMedicine").findOne(query);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Longton
+
+module.exports.getLongtonStoreMedicine = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const page = parseInt(req.query.page);
+    const size = parseInt(req.query.size);
+    const search = req.query.search;
+    let query = {};
+    if (search.length) {
+      query = {
+        availabilityLongton: "Y",
+
+        $or: [
+          { drugName: { $regex: search, $options: "i" } },
+          {
+            condition: { $regex: search, $options: "i" },
+          },
+        ],
+      };
+      const medicine = await db.collection("allMedicine").find(query).toArray();
+      res.send({ medicine });
+    } else {
+      const result = db.collection("allMedicine").find({
+        availabilityLongton: "Y",
+      });
+      const medicine = await result
+        .skip(page * size)
+        .limit(size)
+        .toArray();
+      const countAvailbility = await db
+        .collection("allMedicine")
+        .find({
+          availabilityLongton: "Y",
+        })
+        .toArray();
+      // .estimatedDocumentCount();
+
+      const count = countAvailbility.length;
+      res.send({ count, medicine });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.getLongtonMedicineDetails = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const id = req.params.id;
+    const query = { _id: ObjectId(id) };
+
+    const result = await db.collection("allMedicine").findOne(query);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Post sale
+
+module.exports.postSale = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const sale = req.body;
+    const result = await db.collection("saleCollections").insertOne(sale);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+// getSales
+module.exports.getSale = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const result = await db.collection("saleCollections").find({}).toArray();
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update stock
+
 module.exports.updateMedicineStock = async (req, res) => {
   try {
     const db = getDb();
     const { id } = req.params;
+    const quantity = req.headers.quantity;
+
     if (!ObjectId.isValid(id)) {
       return res
         .status(400)
@@ -372,7 +446,7 @@ module.exports.updateMedicineStock = async (req, res) => {
       { _id: ObjectId(id) },
       {
         $inc: {
-          stock: -1,
+          stock: -quantity,
         },
       }
     );

@@ -18,26 +18,47 @@ router.route("/allmedicine").get(pharmacyController.getAllMedicine);
 router.route("/allmedicine/:id").patch(pharmacyController.updateMedicineStock);
 
 // Stoke Store
-router.route("/stock-store").get(pharmacyController.getStokeStoreMedicine);
+
 router
   .route("/stock-store-id-check-not-required")
   .get(pharmacyController.getStokeStoreMedicineIdCeckNotRequired);
 
+router
+  .route("/stock-store-id-check-not-required/:id")
+  .get(pharmacyController.getStokeMedicineDetails);
+
 // Tunstall
+
 router
   .route("/tunstall-store")
-  .get(pharmacyController.getTunstallStoreMedicine);
-router
-  .route("/tunstall-store-id-check-not-required")
   .get(pharmacyController.getTunstallStoreMedicineIdCeckNotRequired);
+router
+  .route("/tunstall-store/:id")
+  .get(pharmacyController.getTunstallMedicineDetails);
 
 // Fenton
 router.route("/fenton-store").get(pharmacyController.getFentonStoreMedicine);
 router
-  .route("/fenton-store-id-check-not-required")
-  .get(pharmacyController.getFentonStoreMedicineIdCeckNotRequired);
+  .route("/fenton-store/:id")
+  .get(pharmacyController.getFentonMedicineDetails);
 
-// Doctors portal Users
+// Hanely store
+router.route("/hanley-store").get(pharmacyController.getHanleyStoreMedicine);
+router
+  .route("/hanley-store/:id")
+  .get(pharmacyController.getHanleyMedicineDetails);
+
+// Longton store
+router.route("/longton-store").get(pharmacyController.getLongtonStoreMedicine);
+router
+  .route("/longton-store/:id")
+  .get(pharmacyController.getLongtonMedicineDetails);
+
+// Sales
+router
+  .route("/sales")
+  .post(pharmacyController.postSale)
+  .get(pharmacyController.getSale);
 
 // JWT token
 router.route("/jwt").get(doctorsPortalController.getJWT);
