@@ -80,6 +80,27 @@ module.exports.getUserHanley = async (req, res, next) => {
   }
 };
 
+module.exports.getMedicine = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const result = await db.collection("allMedicine").find({}).toArray();
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports.deleteMedicine = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const id = req.params.id;
+    const filter = { _id: ObjectId(id) };
+    const result = await db.collection("allMedicine").deleteOne(filter);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.getAllMedicine = async (req, res, next) => {
   try {
     const db = getDb();
@@ -464,9 +485,32 @@ module.exports.updateMedicineStock = async (req, res) => {
   }
 };
 
-module.exports.testGet = async (req, res, next) => {
+module.exports.postPharmacyUser = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const user = req.body;
+    const result = await db.collection("usesrs").insertOne(user);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.getPharmacyUsers = async (req, res, next) => {
   const db = getDb();
-  const result = await db.collection("test").find({}).toArray();
+  const result = await db.collection("usesrs").find({}).toArray();
   res.json(result);
   console.log(result);
+};
+
+module.exports.deletePharmacyUser = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const id = req.params.id;
+    const filter = { _id: ObjectId(id) };
+    const result = await db.collection("usesrs").deleteOne(filter);
+    res.send(result);
+  } catch (error) {
+    next(error);
+  }
 };

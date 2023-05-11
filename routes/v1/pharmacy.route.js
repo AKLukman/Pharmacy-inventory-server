@@ -16,6 +16,10 @@ router.route("/userHanley/:dob/:store").get(pharmacyController.getUserHanley);
 // Allmedicine
 router.route("/allmedicine").get(pharmacyController.getAllMedicine);
 router.route("/allmedicine/:id").patch(pharmacyController.updateMedicineStock);
+router.route("/pharmacy-medicine").get(pharmacyController.getMedicine);
+router
+  .route("/pharmacy-medicine/:id")
+  .delete(pharmacyController.deleteMedicine);
 
 // Stoke Store
 
@@ -69,11 +73,11 @@ router
   .post(doctorsPortalController.postDoctorsPortalUsers)
   .get(doctorsPortalController.getAllUsers);
 
+router.route("/users/admin/:email").get(doctorsPortalController.getAdmin);
+router.route("/users/stuff/:email").get(doctorsPortalController.getStuff);
 router
   .route("/doctors-portal-users/admin/:id")
   .put(doctorsPortalController.makeAdmin);
-
-router.route("/users/admin/:email").get(doctorsPortalController.getAdmin);
 
 // Appointment
 router
@@ -96,3 +100,13 @@ router
   .get(doctorsPortalController.getDoctors);
 
 router.route("/doctors/:id").delete(doctorsPortalController.deleteDoctor);
+
+// post pharmacy user
+router
+  .route("/pharmacy-user")
+  .post(pharmacyController.postPharmacyUser)
+  .get(pharmacyController.getPharmacyUsers);
+
+router
+  .route("/pharmacy-user/:id")
+  .delete(pharmacyController.deletePharmacyUser);

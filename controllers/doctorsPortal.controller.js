@@ -40,6 +40,8 @@ module.exports.makeAdmin = async (req, res, next) => {
     const db = getDb();
 
     const email = req.headers.email;
+    const role = req.headers.role;
+    // console.log(role);
     console.log(email);
     const query = { email: email };
 
@@ -49,12 +51,13 @@ module.exports.makeAdmin = async (req, res, next) => {
       res.status(403).send({ message: "Forbidden" });
     } else {
       const id = req.params.id;
+      console.log(id);
       const filter = { _id: ObjectId(id) };
       const options = { $upsert: true };
 
       const updatedDoc = {
         $set: {
-          role: "admin",
+          role: role,
         },
       };
       const result = await db
@@ -75,6 +78,19 @@ module.exports.getAdmin = async (req, res, next) => {
     const query = { email: email };
     const user = await db.collection("usersCollections").findOne(query);
     res.send({ isAdmin: user?.role === "admin" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.getStuff = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const email = req.params.email;
+
+    const query = { email: email };
+    const user = await db.collection("usersCollections").findOne(query);
+    res.send({ isStuff: user?.role === "stuff" });
   } catch (error) {
     next(error);
   }
